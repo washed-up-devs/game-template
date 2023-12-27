@@ -42,14 +42,13 @@ jobs:
       - name: Compile
         shell: bash
         run: |
-          echo build path: ${{ matrix.target }}/release/${{ env.GAME_NAME }}${{ matrix.bin_suffix }}
           cargo build --target ${{ matrix.target }} --release --no-default-features
 
       - name: Create artifact
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.GAME_NAME }}-${{ matrix.platform.os_name }}
-          path: ${{ matrix.target }}/release/${{ env.GAME_NAME }}${{ matrix.bin_suffix }}
+          path: target/${{ matrix.target }}/release/${{ env.GAME_NAME }}${{ matrix.bin_suffix }}
 
   release:
     name: Create release
