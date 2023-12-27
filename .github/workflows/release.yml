@@ -27,23 +27,25 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      - name: Install toolchain
+        run: |
+          rustup toolchain install ${{ env.MSRV }} --no-self-update --profile=minimal --target ${{ matrix.target }}
+          rustup override set ${{ env.MSRV }}
+          cargo -V
+
+      - name: Compile
+        shell: bash
+        run: |
+          cargo build --target ${{ matrix.target }} --release --no-default-features
+
       - name: ls cause im dumb
         run: |
           ls
+          ls target/
+          ls target/release/
 
-#       - name: Install toolchain
-#         run: |
-#           rustup toolchain install ${{ env.MSRV }} --no-self-update --profile=minimal --target ${{ matrix.target }}
-#           rustup override set ${{ env.MSRV }}
-#           cargo -V
-# 
-#       - name: Compile
-#         shell: bash
-#         run: |
-#           cargo build --target ${{ matrix.target }} --release --no-default-features
-# 
-#       - name: Release
-#         shell: bash
-#         run: |
-#           mv target/release/${{ env.GAME_NAME }}.exe ${{ env.GAME_NAME }}-${{ matrix.target }}.exe
-#           gh release create ${{github.ref_name}} ${{ env.GAME_NAME }}-${{ matrix.target }}.exe
+      - name: Release
+        shell: bash
+        run: |
+          mv target/release/${{ env.GAME_NAME }}.exe ${{ env.GAME_NAME }}-${{ matrix.target }}.exe
+          gh release create ${{github.ref_name}} ${{ env.GAME_NAME }}-${{ matrix.target }}.exe
