@@ -12,8 +12,8 @@ env:
   CACHE_SUFFIX: c # cache busting
 
 jobs:
-  deploy:
-    name: Deploy ${{ matrix.name }}
+  build:
+    name: Build ${{ matrix.name }}
     permissions: write-all
     strategy:
       fail-fast: false
@@ -23,6 +23,7 @@ jobs:
           - name: Windows x86_64
             os: windows-2022
             target: x86_64-pc-windows-msvc
+            bin_suffix: ".exe"
           # macOS
           - name: macOS x86_64
             os: macos-latest
@@ -41,18 +42,26 @@ jobs:
       - name: Compile
         shell: bash
         run: |
+          echo build path: ${{ matrix.target }}/release/${{ env.GAME_NAME }}${{ matrix.bin_suffix }}
           cargo build --target ${{ matrix.target }} --release --no-default-features
 
-      - name: Release
+      - name: Create artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.GAME_NAME }}-${{ matrix.platform.os_name }}
+          path: ${{ matrix.target }}/release/${{ env.GAME_NAME }}${{ matrix.bin_suffix }}
+
+  release:
+    name: Create release
+    needs: build
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+      - name: Create release
         shell: bash
         run: |
-          if [ "$RUNNER_OS" == "macOS" ]; then
-              mv target/${{ matrix.target }}/release/${{ env.GAME_NAME }} ${{ env.GAME_NAME }}-${{ matrix.target }}
-              gh release create ${{ github.ref_name }} ${{ env.GAME_NAME }}-${{ matrix.target }} --title ${{ github.ref_name }}
-          elif [ "$RUNNER_OS" == "Windows" ]; then
-              mv target/${{ matrix.target }}/release/${{ env.GAME_NAME }}.exe ${{ env.GAME_NAME }}-${{ matrix.target }}.exe
-              gh release create ${{ github.ref_name }} ${{ env.GAME_NAME }}-${{ matrix.target }}.exe --title ${{ github.ref_name }}
-          else
-              echo "unsupported runner os: $RUNNER_OS"
-              exit 1
-          fi
+          echo "creating release with files:"
+          ls -R
+          gh release create ${{ github.ref_name }} $(ls)
