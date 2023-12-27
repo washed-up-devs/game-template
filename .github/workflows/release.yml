@@ -43,4 +43,4 @@ jobs:
         shell: bash
         run: |
           mv target/${{ matrix.target }}/release/${{ env.GAME_NAME }}.exe ${{ env.GAME_NAME }}-${{ matrix.target }}.exe
-          gh release create ${{github.ref_name}} ${{ env.GAME_NAME }}-${{ matrix.target }}.exe
+          gh release create ${{ github.ref_name }} ${{ env.GAME_NAME }}-${{ matrix.target }}.exe --title ${{ github.ref_name }}
