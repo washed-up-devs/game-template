@@ -42,10 +42,10 @@ jobs:
         run: |
           ls
           ls target/
-          ls target/release/
+          ls target/${{ matrix.target }}
 
       - name: Release
         shell: bash
         run: |
-          mv target/release/${{ env.GAME_NAME }}.exe ${{ env.GAME_NAME }}-${{ matrix.target }}.exe
+          mv target/${{ matrix.target }}/${{ env.GAME_NAME }}.exe ${{ env.GAME_NAME }}-${{ matrix.target }}.exe
           gh release create ${{github.ref_name}} ${{ env.GAME_NAME }}-${{ matrix.target }}.exe
