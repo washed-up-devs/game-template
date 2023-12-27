@@ -1,4 +1,4 @@
-name: release
+name: Release
 
 on: 
   push:
@@ -6,6 +6,7 @@ on:
     tags: "v[0-9]+.[0-9]+.[0-9]+"
 
 env:
+  GITHUB_TOKEN: ${{ github.token }}
   GAME_NAME: "game-template"
   MSRV: "1.71" # minimum supported rust version
   CACHE_SUFFIX: c # cache busting
@@ -23,21 +24,22 @@ jobs:
             target: x86_64-pc-windows-msvc
     runs-on: ${{ matrix.os }}
     steps:
-      - name: checkout repo
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: install toolchain
+      - name: Install toolchain
         run: |
           rustup toolchain install ${{ env.MSRV }} --no-self-update --profile=minimal --target ${{ matrix.target }}
           rustup override set ${{ env.MSRV }}
           cargo -V
 
-      - name: compile
+      - name: Compile
         shell: bash
         run: |
           cargo build --target ${{ matrix.target }} --release --no-default-features
 
-      - name: release
+      - name: Release
         shell: bash
         run: |
-          gh release create ${{github.ref_name}} target/release/${{ env.GAME_NAME }}.exe
+          mv target/release/${{ env.GAME_NAME }}.exe ${{ env.GAME_NAME }}-${{ matrix.target }}.exe
+          gh release create ${{github.ref_name}} ${{ env.GAME_NAME }}-${{ matrix.target }}.exe
