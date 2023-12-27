@@ -12,8 +12,9 @@ env:
   CACHE_SUFFIX: c # cache busting
 
 jobs:
-  check:
+  deploy:
     name: Deploy ${{ matrix.name }}
+    permissions: write-all
     strategy:
       fail-fast: false
       matrix:
@@ -37,12 +38,6 @@ jobs:
         shell: bash
         run: |
           cargo build --target ${{ matrix.target }} --release --no-default-features
-
-      - name: ls cause im dumb
-        run: |
-          ls
-          ls target/
-          ls target/${{ matrix.target }}
 
       - name: Release
         shell: bash
