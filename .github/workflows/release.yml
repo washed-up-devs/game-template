@@ -2,7 +2,6 @@ name: Release
 
 on: 
   push:
-    branches: "main"
     tags: "v[0-9]+.[0-9]+.[0-9]+"
 
 env:
@@ -47,7 +46,7 @@ jobs:
       - name: Create artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ env.GAME_NAME }}-${{ matrix.platform.os_name }}
+          name: ${{ env.GAME_NAME }}-${{ matrix.os }}
           path: target/${{ matrix.target }}/release/${{ env.GAME_NAME }}${{ matrix.bin_suffix }}
 
   release:
