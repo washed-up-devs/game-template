@@ -22,17 +22,18 @@ jobs:
           - name: Windows x86_64
             os: windows-2022
             target: x86_64-pc-windows-msvc
-            bin_suffix: "-win-x86_64.exe"
+            target_bin_suffix: ".exe"
+            release_bin_suffix: "-win-x86_64.exe"
           # macOS Intel
           - name: macOS x86_64
             os: macos-latest
             target: x86_64-apple-darwin
-            bin_suffix: "-macos-x86_64"
+            release_bin_suffix: "-macos-x86_64"
           # macOS Apple Silicon
           - name: macOS arm64
             os: macos-latest
             target: aarch64-apple-darwin
-            bin_suffix: "-macos-arm64"
+            release_bin_suffix: "-macos-arm64"
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repo
@@ -52,8 +53,8 @@ jobs:
       - name: Create artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ env.GAME_NAME }}-${{ matrix.os }}
-          path: target/${{ matrix.target }}/release/${{ env.GAME_NAME }}${{ matrix.bin_suffix }}
+          name: ${{ env.GAME_NAME }}-${{ matrix.os }}-${{ release_bin_suffix }}
+          path: target/${{ matrix.target }}/release/${{ env.GAME_NAME }}${{ matrix.target_bin_suffix }}
 
   release:
     name: Create release
