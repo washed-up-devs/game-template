@@ -25,7 +25,7 @@ jobs:
 
       - name: Set version
         shell: bash
-        run: sed -i '0,/dependencies/ s/version = ".*"/version = "0.3.0"/' Cargo.toml
+        run: sed -i '0,/dependencies/ s/version = ".*"/version = "${{ github.ref_name }}"/' Cargo.toml
 
   build-and-upload:
     name: Build ${{ matrix.name }}
