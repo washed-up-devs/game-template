@@ -15,6 +15,9 @@ jobs:
     name: Create release
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
       - name: Create release
         shell: bash
         run: gh release create ${{ github.ref_name }} -d
@@ -45,9 +48,6 @@ jobs:
             release_bin_suffix: "-macos-arm64"
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
       - name: Install toolchain
         run: |
           rustup toolchain install ${{ env.MSRV }} --no-self-update --profile=minimal --target ${{ matrix.target }}
