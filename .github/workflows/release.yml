@@ -23,6 +23,10 @@ jobs:
         shell: bash
         run: gh release create ${{ github.ref_name }} -d
 
+      - name: Set version
+        shell: bash
+        run: sed -i '0,/dependencies/ s/version = ".*"/version = "0.3.0"/' Cargo.toml
+
   build-and-upload:
     name: Build ${{ matrix.name }}
     needs: create-release
@@ -36,17 +40,14 @@ jobs:
             os: windows-2022
             target: x86_64-pc-windows-msvc
             target_bin_suffix: ".exe"
-            release_bin_suffix: "-win-x86_64.exe"
           # macOS Intel
           - name: macOS x86_64
             os: macos-latest
             target: x86_64-apple-darwin
-            release_bin_suffix: "-macos-x86_64"
           # macOS Apple Silicon
           - name: macOS arm64
             os: macos-latest
             target: aarch64-apple-darwin
-            release_bin_suffix: "-macos-arm64"
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repo
@@ -80,3 +81,11 @@ jobs:
       - name: Publish release
         shell: bash
         run: gh release edit ${{ github.ref_name }} --draft=false
+
+      - name: Commit changes
+        shell: bash
+        run: |
+          git config --global user.name 'Chay Nabors'
+          git config --global user.email 'chaynabors@users.noreply.github.com'
+          git commit -am "bump version"
+          git push
