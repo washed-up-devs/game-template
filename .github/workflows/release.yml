@@ -13,6 +13,7 @@ env:
 jobs:
   create-release:
     name: Create release
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -67,6 +68,7 @@ jobs:
   publish-release:
     name: Publish release
     needs: build-and-upload
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - name: Publish release
