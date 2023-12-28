@@ -53,7 +53,7 @@ jobs:
       - name: Create artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ env.GAME_NAME }}-${{ matrix.os }}-${{ release_bin_suffix }}
+          name: ${{ env.GAME_NAME }}-${{ matrix.os }}-${{ matrix.release_bin_suffix }}
           path: target/${{ matrix.target }}/release/${{ env.GAME_NAME }}${{ matrix.target_bin_suffix }}
 
   release:
